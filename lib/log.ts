@@ -4,4 +4,4 @@ const log = console.log;
 const error = (...args: unknown[]) =>
   console.error(chalk.bgRed(" ERROR "), ...args);
 
-export { log, error };
+export { error, log };

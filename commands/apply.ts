@@ -1,6 +1,6 @@
 import { chalk, defineCommand } from "../deps.ts";
 import { chostsSettingToHosts, getChosts } from "../lib/chosts.ts";
-import { writeHosts, clearDnsCache } from "../lib/hosts.ts";
+import { clearDnsCache, writeHosts } from "../lib/hosts.ts";
 import { error } from "../lib/log.ts";
 
 export default defineCommand({
@@ -21,7 +21,7 @@ export default defineCommand({
 
     const chosts = getChosts();
     const setting = chosts.settings.find(
-      (config) => config.name === rawArgs[0]
+      (config) => config.name === rawArgs[0],
     );
 
     if (setting === undefined) {
