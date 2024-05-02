@@ -1,4 +1,4 @@
-import { chalk, defineCommand } from "../deps.ts";
+import { boxen, chalk, defineCommand } from "../deps.ts";
 import { chostsSettingToHosts, getChosts } from "../lib/chosts.ts";
 import { readCurrentHosts } from "../lib/hosts.ts";
 import { log } from "../lib/log.ts";
@@ -19,7 +19,7 @@ export default defineCommand({
 
     if (rawArgs.length === 0) {
       log(chalk.bold.inverse(" /etc/hosts "));
-      log(readCurrentHosts());
+      log(boxen(readCurrentHosts(), { borderStyle: "double" }));
       return;
     }
 
@@ -36,8 +36,9 @@ export default defineCommand({
       log(chalk.bold.inverse(" Description "));
       log(config.description);
       log();
+
       log(chalk.bold.inverse(" hosts "));
-      log(chostsSettingToHosts(config));
+      log(boxen(chostsSettingToHosts(config), { borderStyle: "double" }));
     }
   },
 });
