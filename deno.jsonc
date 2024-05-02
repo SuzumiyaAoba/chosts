@@ -1,0 +1,6 @@
+{
+  "tasks": {
+    "run": "deno run --allow-env --allow-read --allow-write=/etc/hosts --allow-run main.ts",
+    "check": "deno fmt --check && deno lint"
+  }
+}
