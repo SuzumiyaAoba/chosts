@@ -21,7 +21,7 @@ export default defineCommand({
 
     const chosts = getChosts();
     const setting = chosts.settings.find(
-      (config) => config.name === rawArgs[0],
+      (config) => config.name === rawArgs[0]
     );
 
     if (setting === undefined) {

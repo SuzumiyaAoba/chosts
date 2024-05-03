@@ -2,17 +2,17 @@ import { z } from "../deps.ts";
 import { yaml } from "../deps.ts";
 import { produce } from "../deps.ts";
 
+const hostEntrySchema = z.object({
+  ip: z.string(),
+  hostname: z.string(),
+  description: z.string().optional(),
+});
+
 const hostsSettingSchema = z.object({
   type: z.literal("hosts"),
   name: z.string(),
   description: z.string().optional(),
-  hosts: z.array(
-    z.object({
-      ip: z.string(),
-      hostnames: z.array(z.string()),
-      description: z.string().optional(),
-    }),
-  ),
+  entries: z.array(hostEntrySchema),
 });
 
 type HostsSetting = z.infer<typeof hostsSettingSchema>;
@@ -22,8 +22,7 @@ const remoteSettingSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   url: z.string(),
-  trusted: z.boolean().optional(),
-  updateInterval: z.string().optional(),
+  entries: z.array(hostEntrySchema),
 });
 
 type RemoteSetting = z.infer<typeof remoteSettingSchema>;
@@ -32,7 +31,7 @@ const combinedSettingSchema = z.object({
   type: z.literal("combined"),
   name: z.string(),
   description: z.string().optional(),
-  sources: z.array(z.string()),
+  settings: z.array(z.string()),
 });
 
 type CombinedSetting = z.infer<typeof combinedSettingSchema>;
@@ -61,7 +60,7 @@ const DEFAULT_CHOSTS_CONFIG: ChostsConfig = {
 } as const;
 
 const getChosts = (
-  chostsConfig: ChostsConfig = DEFAULT_CHOSTS_CONFIG,
+  chostsConfig: ChostsConfig = DEFAULT_CHOSTS_CONFIG
 ): Chosts => {
   const configPath = `${chostsConfig.configDir}/config.yaml`;
 
@@ -94,7 +93,7 @@ const deleteChosts = (chosts: Chosts, name: string) => {
 
 const addChosts = (
   chosts: Chosts,
-  config: HostsSetting | RemoteSetting | CombinedSetting,
+  config: HostsSetting | RemoteSetting | CombinedSetting
 ) => {
   return produce(chosts, (draft) => {
     draft.settings.push(config);
@@ -104,7 +103,7 @@ const addChosts = (
 const updateChosts = (
   chosts: Chosts,
   name: string,
-  config: HostsSetting | RemoteSetting | CombinedSetting,
+  config: HostsSetting | RemoteSetting | CombinedSetting
 ) => {
   return produce(chosts, (draft) => {
     const index = draft.settings.findIndex((config) => config.name === name);
@@ -114,26 +113,23 @@ const updateChosts = (
 
 const hostsSettingToHosts = (settings: HostsSetting): string => {
   const description = settings.description
-    ? `${
-      settings.description
+    ? `${settings.description
         .split("\n")
         .map((line) => `# ${line}`)
-        .join("\n")
-    }`
+        .join("\n")}`
     : "";
-  const hosts = settings.hosts
+  const hosts = settings.entries
     .map((host) => {
-      const longestLengthes = longestLength(settings.hosts);
+      const longestLengthes = longestLength(settings.entries);
       const description = host.description ? `# ${host.description}` : "";
 
-      return host.hostnames
-        .map((hostname) => {
-          const paddedIp = host.ip.padEnd(longestLengthes.ip, " ");
-          const paddedHostname = hostname.padEnd(longestLengthes.hostname, " ");
+      const paddedIp = host.ip.padEnd(longestLengthes.ip, " ");
+      const paddedHostname = host.hostname.padEnd(
+        longestLengthes.hostname,
+        " "
+      );
 
-          return `${paddedIp} ${paddedHostname} ${description}`;
-        })
-        .join("\n");
+      return `${paddedIp} ${paddedHostname} ${description}`;
     })
     .join("\n");
 
@@ -143,32 +139,24 @@ const hostsSettingToHosts = (settings: HostsSetting): string => {
 const longestLength = (
   hosts: Array<{
     ip: string;
-    hostnames: string[];
-  }>,
+    hostname: string;
+  }>
 ): { ip: number; hostname: number } => {
   const ip = Math.max(...hosts.map((host) => host.ip.length));
-  const hostname = Math.max(
-    ...hosts.flatMap((host) =>
-      host.hostnames.map((hostname) => hostname.length)
-    ),
-  );
+  const hostname = Math.max(...hosts.flatMap((host) => host.hostname.length));
 
   return { ip, hostname };
 };
 
 const remoteSettingToHosts = (settings: RemoteSetting): string => {
   const description = settings.description ? `# ${settings.description}` : "";
-  const trusted = settings.trusted ? "# trusted" : "";
-  const updateInterval = settings.updateInterval
-    ? `# updateInterval: ${settings.updateInterval}`
-    : "";
 
-  return `${description}\n# ${settings.url} ${trusted} ${updateInterval}`;
+  return `${description}\n# ${settings.url}`;
 };
 
 const combinedSettingToHosts = (settings: CombinedSetting): string => {
   const description = settings.description ? `# ${settings.description}` : "";
-  const sources = settings.sources.map((source) => `# ${source}`).join("\n");
+  const sources = settings.settings.map((source) => `# ${source}`).join("\n");
 
   return `${description}\n${sources}`;
 };
