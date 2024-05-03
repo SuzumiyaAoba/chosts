@@ -111,16 +111,16 @@ const updateChosts = (
   });
 };
 
-const hostsSettingToHosts = (settings: HostsSetting): string => {
-  const description = settings.description
-    ? `${settings.description
+const hostsSettingToHosts = (setting: HostsSetting): string => {
+  const description = setting.description
+    ? `${setting.description
         .split("\n")
         .map((line) => `# ${line}`)
         .join("\n")}`
     : "";
-  const hosts = settings.entries
+  const hosts = setting.entries
     .map((host) => {
-      const longestLengthes = longestLength(settings.entries);
+      const longestLengthes = longestLength(setting.entries);
       const description = host.description ? `# ${host.description}` : "";
 
       const paddedIp = host.ip.padEnd(longestLengthes.ip, " ");
@@ -154,21 +154,40 @@ const remoteSettingToHosts = (settings: RemoteSetting): string => {
   return `${description}\n# ${settings.url}`;
 };
 
-const combinedSettingToHosts = (settings: CombinedSetting): string => {
-  const description = settings.description ? `# ${settings.description}` : "";
-  const sources = settings.settings.map((source) => `# ${source}`).join("\n");
+const combinedSettingToHosts = (
+  chosts: Chosts,
+  setting: CombinedSetting
+): string => {
+  const description = setting.description
+    ? `##\n# ${setting.description}\n##\n`
+    : "";
+  const names = new Set(setting.settings);
+  const settings = chosts.settings.filter((config) => names.has(config.name));
 
-  return `${description}\n${sources}`;
+  if (settings.some((config) => config.type === "combined")) {
+    throw new Error(
+      "Combined settings cannot contain other combined settings."
+    );
+  }
+
+  const hosts = settings
+    .map((s) => chostsSettingToHosts(chosts, s))
+    .join("\n\n");
+
+  return `${description}\n${hosts}`;
 };
 
-const chostsSettingToHosts = (settings: ChostsSetting): string => {
-  switch (settings.type) {
+const chostsSettingToHosts = (
+  chosts: Chosts,
+  setting: ChostsSetting
+): string => {
+  switch (setting.type) {
     case "hosts":
-      return hostsSettingToHosts(settings);
+      return hostsSettingToHosts(setting);
     case "remote":
-      return remoteSettingToHosts(settings);
+      return remoteSettingToHosts(setting);
     case "combined":
-      return combinedSettingToHosts(settings);
+      return combinedSettingToHosts(chosts, setting);
   }
 };
 

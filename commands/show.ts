@@ -38,7 +38,9 @@ export default defineCommand({
       log();
 
       log(chalk.bold.inverse(" hosts "));
-      log(boxen(chostsSettingToHosts(config), { borderStyle: "double" }));
+      log(
+        boxen(chostsSettingToHosts(chosts, config), { borderStyle: "double" })
+      );
     }
   },
 });

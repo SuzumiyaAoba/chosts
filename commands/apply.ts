@@ -29,7 +29,7 @@ export default defineCommand({
       return;
     }
 
-    const hosts = chostsSettingToHosts(setting);
+    const hosts = chostsSettingToHosts(chosts, setting);
     writeHosts(hosts);
 
     clearDnsCache();
