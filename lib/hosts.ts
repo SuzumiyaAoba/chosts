@@ -1,4 +1,5 @@
-import { $, z } from "../deps.ts";
+import { stripAnsiCode } from "jsr:@std/fmt@^0.221.0/colors";
+import { $, chalk, z } from "../deps.ts";
 import { getDarwinVersion } from "./os.ts";
 
 const clearDnsCache = async () => {
@@ -42,7 +43,7 @@ const readCurrentHosts = (path: string = "/etc/hosts"): string => {
 };
 
 const writeHosts = (hosts: string, path: string = "/etc/hosts"): void => {
-  Deno.writeTextFileSync(path, hosts);
+  Deno.writeTextFileSync(path, stripAnsiCode(hosts));
 };
 
 //
@@ -81,18 +82,23 @@ const hostsToString = (hosts: Hosts): string => {
     ?.split("\n")
     .map((line) => `# ${line}`)
     .join("\n");
-  const header = comment ? `##\n${comment}\n##` : "";
+  const header = comment ? chalk.gray(`##\n${comment}\n##`) : "";
 
   const longest = longestLength(hosts.lines);
   const lines = hosts.lines
     .map((line) => {
       switch (line.type) {
-        case "entry":
-          return `${line.ip.padEnd(longest.ip)} ${line.hostnames
-            .join(" ")
-            .padEnd(longest.hostnames)} # ${line.comment}`;
+        case "entry": {
+          const ip = chalk.green(line.ip.padEnd(longest.ip));
+          const hostnames = chalk.magenta(
+            line.hostnames.join(" ").padEnd(longest.hostnames)
+          );
+          const comment = line.comment ? chalk.gray(`# ${line.comment}`) : "";
+
+          return `${ip} ${hostnames} ${comment}`;
+        }
         case "comment":
-          return `# ${line.comment}`;
+          return chalk.gray(`# ${line.comment}`);
       }
     })
     .join("\n");

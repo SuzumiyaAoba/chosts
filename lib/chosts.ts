@@ -190,6 +190,7 @@ const chostsSettingToHostsString = (
 export type {
   Chosts,
   ChostsConfig,
+  ChostsSetting,
   CombinedSetting,
   HostsSetting,
   RemoteSetting,

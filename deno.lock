@@ -17,7 +17,9 @@
       "npm:boxen@7.1.1": "npm:boxen@7.1.1",
       "npm:chalk@5.3.0": "npm:chalk@5.3.0",
       "npm:citty@0.1.6": "npm:citty@0.1.6",
-      "npm:immer@10.1.1": "npm:immer@10.1.1"
+      "npm:immer@10.1.1": "npm:immer@10.1.1",
+      "npm:strip-ansi@7.0.0": "npm:strip-ansi@7.0.0",
+      "npm:strip-ansi@7.1.0": "npm:strip-ansi@7.1.0"
     },
     "jsr": {
       "@david/dax@0.40.1": {
@@ -167,6 +169,12 @@
         "integrity": "sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==",
         "dependencies": {
           "ansi-regex": "ansi-regex@5.0.1"
+        }
+      },
+      "strip-ansi@7.0.0": {
+        "integrity": "sha512-UhDTSnGF1dc0DRbUqr1aXwNoY3RgVkSWG8BrpnuFIxhP57IqbS7IRta2Gfiavds4yCxc5+fEAVVOgBZWnYkvzg==",
+        "dependencies": {
+          "ansi-regex": "ansi-regex@6.0.1"
         }
       },
       "strip-ansi@7.1.0": {

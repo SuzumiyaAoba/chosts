@@ -18,7 +18,7 @@ export default defineCommand({
     const chosts = getChosts();
 
     if (rawArgs.length === 0) {
-      log(chalk.bold.inverse(" /etc/hosts "));
+      log(chalk.inverse(" File:", chalk.bold("/etc/hosts ")));
       log(boxen(readCurrentHosts(), { borderStyle: "double" }));
       return;
     }

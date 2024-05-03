@@ -1,5 +1,5 @@
 import { defineCommand } from "../deps.ts";
-import { Chosts, getChosts } from "../lib/chosts.ts";
+import { Chosts, ChostsSetting, getChosts } from "../lib/chosts.ts";
 
 export default defineCommand({
   meta: {
@@ -13,22 +13,35 @@ export default defineCommand({
       alias: "l",
       default: false,
     },
+    type: {
+      type: "string",
+      description: "List hosts of a specific type.",
+      alias: "t",
+      default: "all",
+    },
   },
   run({ args }) {
     const chosts = getChosts();
+    const settings = (chosts.settings = chosts.settings.filter((config) => {
+      if (args.type === "all") {
+        return true;
+      }
+
+      return config.type === args.type;
+    }));
 
     if (args.long) {
-      longFormat(chosts);
+      longFormat(settings);
     } else {
-      defaultFormat(chosts);
+      defaultFormat(settings);
     }
   },
 });
 
-const longFormat = (chosts: Chosts) => {
+const longFormat = (settings: ChostsSetting[]) => {
   console.log("TODO");
 };
 
-const defaultFormat = (chosts: Chosts) => {
-  console.log(chosts.settings.map((config) => config.name).join(" "));
+const defaultFormat = (settings: ChostsSetting[]) => {
+  console.log(settings.map((config) => config.name).join(" "));
 };

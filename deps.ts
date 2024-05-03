@@ -12,6 +12,7 @@ export { defineCommand, runMain } from "npm:citty@0.1.6";
 
 // https://github.com/chalk/chalk
 export { default as chalk } from "npm:chalk@5.3.0";
+export { default as stripAnsi } from "npm:strip-ansi@7.1.0";
 
 export { default as boxen } from "npm:boxen@7.1.1";
 
