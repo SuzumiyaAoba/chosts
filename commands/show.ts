@@ -1,5 +1,5 @@
 import { boxen, chalk, defineCommand } from "../deps.ts";
-import { chostsSettingToHosts, getChosts } from "../lib/chosts.ts";
+import { chostsSettingToHostsString, getChosts } from "../lib/chosts.ts";
 import { readCurrentHosts } from "../lib/hosts.ts";
 import { log } from "../lib/log.ts";
 
@@ -39,7 +39,9 @@ export default defineCommand({
 
       log(chalk.bold.inverse(" hosts "));
       log(
-        boxen(chostsSettingToHosts(chosts, config), { borderStyle: "double" })
+        boxen(chostsSettingToHostsString(chosts, config), {
+          borderStyle: "double",
+        })
       );
     }
   },

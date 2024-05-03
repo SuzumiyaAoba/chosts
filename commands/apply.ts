@@ -1,5 +1,5 @@
 import { chalk, defineCommand } from "../deps.ts";
-import { chostsSettingToHosts, getChosts } from "../lib/chosts.ts";
+import { chostsSettingToHostsString, getChosts } from "../lib/chosts.ts";
 import { clearDnsCache, writeHosts } from "../lib/hosts.ts";
 import { error } from "../lib/log.ts";
 
@@ -29,8 +29,7 @@ export default defineCommand({
       return;
     }
 
-    const hosts = chostsSettingToHosts(chosts, setting);
-    writeHosts(hosts);
+    writeHosts(chostsSettingToHostsString(chosts, setting));
 
     clearDnsCache();
   },

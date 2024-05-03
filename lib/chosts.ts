@@ -1,12 +1,17 @@
 import { z } from "../deps.ts";
 import { yaml } from "../deps.ts";
 import { produce } from "../deps.ts";
+import { HostsLine } from "./hosts.ts";
+import { Hosts } from "./hosts.ts";
+import { hostsToString } from "./hosts.ts";
 
 const hostEntrySchema = z.object({
   ip: z.string(),
-  hostname: z.string(),
+  hostnames: z.array(z.string()),
   description: z.string().optional(),
 });
+
+type HostEntry = z.infer<typeof hostEntrySchema>;
 
 const hostsSettingSchema = z.object({
   type: z.literal("hosts"),
@@ -111,56 +116,38 @@ const updateChosts = (
   });
 };
 
-const hostsSettingToHosts = (setting: HostsSetting): string => {
-  const description = setting.description
-    ? `${setting.description
-        .split("\n")
-        .map((line) => `# ${line}`)
-        .join("\n")}`
-    : "";
-  const hosts = setting.entries
-    .map((host) => {
-      const longestLengthes = longestLength(setting.entries);
-      const description = host.description ? `# ${host.description}` : "";
-
-      const paddedIp = host.ip.padEnd(longestLengthes.ip, " ");
-      const paddedHostname = host.hostname.padEnd(
-        longestLengthes.hostname,
-        " "
-      );
-
-      return `${paddedIp} ${paddedHostname} ${description}`;
-    })
-    .join("\n");
-
-  return `##\n${description}\n##\n${hosts}`;
+const entryToLine = (entry: HostEntry): HostsLine => {
+  return {
+    type: "entry",
+    ip: entry.ip,
+    hostnames: entry.hostnames,
+    comment: entry.description,
+  };
 };
 
-const longestLength = (
-  hosts: Array<{
-    ip: string;
-    hostname: string;
-  }>
-): { ip: number; hostname: number } => {
-  const ip = Math.max(...hosts.map((host) => host.ip.length));
-  const hostname = Math.max(...hosts.flatMap((host) => host.hostname.length));
-
-  return { ip, hostname };
+const hostsSettingToHosts = (setting: HostsSetting): Hosts => {
+  return {
+    comment: setting.description,
+    lines: setting.entries.map((entry) => entryToLine(entry)),
+  };
 };
 
-const remoteSettingToHosts = (settings: RemoteSetting): string => {
-  const description = settings.description ? `# ${settings.description}` : "";
-
-  return `${description}\n# ${settings.url}`;
+const remoteSettingToHosts = (settings: RemoteSetting): Hosts => {
+  return {
+    comment: settings.description,
+    lines: settings.entries.map((entry) => entryToLine(entry)),
+  };
 };
 
 const combinedSettingToHosts = (
   chosts: Chosts,
   setting: CombinedSetting
-): string => {
-  const description = setting.description
-    ? `##\n# ${setting.description}\n##\n`
-    : "";
+): Hosts[] => {
+  const hosts: Hosts = {
+    comment: setting.description,
+    lines: [],
+  } as const;
+
   const names = new Set(setting.settings);
   const settings = chosts.settings.filter((config) => names.has(config.name));
 
@@ -170,25 +157,34 @@ const combinedSettingToHosts = (
     );
   }
 
-  const hosts = settings
-    .map((s) => chostsSettingToHosts(chosts, s))
-    .join("\n\n");
+  const combinedHosts = settings.flatMap((config) =>
+    chostsSettingToHosts(chosts, config)
+  );
 
-  return `${description}\n${hosts}`;
+  return [hosts, ...combinedHosts];
 };
 
 const chostsSettingToHosts = (
   chosts: Chosts,
   setting: ChostsSetting
-): string => {
+): Hosts[] => {
   switch (setting.type) {
     case "hosts":
-      return hostsSettingToHosts(setting);
+      return [hostsSettingToHosts(setting)];
     case "remote":
-      return remoteSettingToHosts(setting);
+      return [remoteSettingToHosts(setting)];
     case "combined":
       return combinedSettingToHosts(chosts, setting);
   }
+};
+
+const chostsSettingToHostsString = (
+  chosts: Chosts,
+  setting: ChostsSetting
+): string => {
+  const hosts = chostsSettingToHosts(chosts, setting);
+
+  return hosts.map((hosts) => hostsToString(hosts)).join("\n\n");
 };
 
 export type {
@@ -201,6 +197,7 @@ export type {
 export {
   addChosts,
   chostsSettingToHosts,
+  chostsSettingToHostsString,
   DEFAULT_CHOSTS_CONFIG,
   deleteChosts,
   deleteChostsConfig,
