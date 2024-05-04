@@ -1,4 +1,4 @@
-import { chalk } from "../deps.ts";
+import { chalk } from "#deps";
 
 const log = console.log;
 const error = (...args: unknown[]) =>

@@ -1,5 +1,5 @@
 import { defineCommand } from "../deps.ts";
-import { Chosts, ChostsSetting, getChosts } from "../lib/chosts.ts";
+import { ChostsSetting, getChosts } from "../lib/chosts.ts";
 
 export default defineCommand({
   meta: {
@@ -18,6 +18,7 @@ export default defineCommand({
       description: "List hosts of a specific type.",
       alias: "t",
       default: "all",
+      valueHint: "all|hosts|remote|combined",
     },
   },
   run({ args }) {

@@ -1,18 +1,12 @@
 import { boxen, chalk, defineCommand } from "../deps.ts";
 import { chostsSettingToHostsString, getChosts } from "../lib/chosts.ts";
-import { readCurrentHosts } from "../lib/hosts.ts";
+import { readCurrentHosts } from "../lib/hosts/_hosts.ts";
 import { log } from "../lib/log.ts";
 
 export default defineCommand({
   meta: {
     name: "show",
     description: "Show a specific host",
-  },
-  args: {
-    name: {
-      type: "string",
-      description: "The name of the host to show.",
-    },
   },
   run({ rawArgs }) {
     const chosts = getChosts();
@@ -41,7 +35,7 @@ export default defineCommand({
       log(
         boxen(chostsSettingToHostsString(chosts, config), {
           borderStyle: "double",
-        })
+        }),
       );
     }
   },

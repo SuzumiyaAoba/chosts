@@ -1,9 +1,13 @@
-import { z } from "../deps.ts";
-import { yaml } from "../deps.ts";
-import { produce } from "../deps.ts";
-import { HostsLine } from "./hosts.ts";
-import { Hosts } from "./hosts.ts";
-import { hostsToString } from "./hosts.ts";
+import { z } from "#deps";
+import { yaml } from "#deps";
+import { produce } from "#deps";
+import { readCache, saveCache } from "./cache.ts";
+import { hostsToString } from "./hosts/_hosts.ts";
+import { Hosts, HostsLine } from "./hosts/types.ts";
+
+//
+// Schema
+//
 
 const hostEntrySchema = z.object({
   ip: z.string(),
@@ -27,7 +31,6 @@ const remoteSettingSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   url: z.string(),
-  entries: z.array(hostEntrySchema),
 });
 
 type RemoteSetting = z.infer<typeof remoteSettingSchema>;
@@ -55,6 +58,10 @@ const chostsSchema = z.object({
 });
 
 type Chosts = z.infer<typeof chostsSchema>;
+
+//
+// Chosts
+//
 
 type ChostsConfig = {
   configDir: string;
@@ -116,6 +123,27 @@ const updateChosts = (
   });
 };
 
+//
+// Remote
+//
+
+const fetchRemoteHosts = async (setting: RemoteSetting): Promise<string> => {
+  const response = await fetch(setting.url);
+  const text = await response.text();
+
+  saveCache(setting.name, text);
+
+  return text;
+};
+
+const readCachedRemoteHosts = (name: string): string | undefined => {
+  return readCache(name);
+};
+
+//
+// Chosts to Hosts
+//
+
 const entryToLine = (entry: HostEntry): HostsLine => {
   return {
     type: "entry",
@@ -135,7 +163,12 @@ const hostsSettingToHosts = (setting: HostsSetting): Hosts => {
 const remoteSettingToHosts = (settings: RemoteSetting): Hosts => {
   return {
     comment: settings.description,
-    lines: settings.entries.map((entry) => entryToLine(entry)),
+    lines: [
+      {
+        type: "raw",
+        raw: readCachedRemoteHosts(settings.name) ?? "",
+      },
+    ],
   };
 };
 
@@ -187,6 +220,10 @@ const chostsSettingToHostsString = (
   return hosts.map((hosts) => hostsToString(hosts)).join("\n\n");
 };
 
+//
+// exports
+//
+
 export type {
   Chosts,
   ChostsConfig,
@@ -199,6 +236,8 @@ export {
   addChosts,
   chostsSettingToHosts,
   chostsSettingToHostsString,
+  readCachedRemoteHosts,
+  fetchRemoteHosts,
   DEFAULT_CHOSTS_CONFIG,
   deleteChosts,
   deleteChostsConfig,

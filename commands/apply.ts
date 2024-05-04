@@ -1,6 +1,7 @@
 import { chalk, defineCommand } from "../deps.ts";
 import { chostsSettingToHostsString, getChosts } from "../lib/chosts.ts";
-import { clearDnsCache, writeHosts } from "../lib/hosts.ts";
+import { writeHosts } from "../lib/hosts/_hosts.ts";
+import { clearDnsCache } from "./lib/hosts/darwin.ts";
 import { error } from "../lib/log.ts";
 
 export default defineCommand({
