@@ -1,5 +1,6 @@
-import { defineCommand } from "../deps.ts";
-import { ChostsSetting, getChosts } from "../lib/chosts.ts";
+import { defineCommand } from "citty";
+import { ChostsSetting, getChosts } from "/lib/chosts.ts";
+import { configArgs } from "/commands/args.ts";
 
 export default defineCommand({
   meta: {
@@ -7,6 +8,7 @@ export default defineCommand({
     description: "List all hosts",
   },
   args: {
+    config: configArgs,
     long: {
       type: "boolean",
       description: "List hosts in the long format.",
@@ -22,7 +24,7 @@ export default defineCommand({
     },
   },
   run({ args }) {
-    const chosts = getChosts();
+    const chosts = getChosts(args.config);
     const settings = (chosts.settings = chosts.settings.filter((config) => {
       if (args.type === "all") {
         return true;

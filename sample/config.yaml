@@ -1,0 +1,36 @@
+version: 1
+settings:
+  - type: hosts
+    name: default
+    description: |-
+      Host Database
+
+      localhost is used to configure the loopback interface
+      when the system is booting.  Do not change this entry.
+    entries:
+      - ip: 127.0.0.1
+        hostnames:
+          - localhost
+        description: IPv4 loopback
+      - ip: 255.255.255.255.255
+        hostnames:
+          - broadcasthost
+        description: Broadcast address for the local network segment
+      - ip: ::1
+        hostnames:
+          - localhost
+        description: IPv6 loopback
+  - type: hosts
+    name: sample
+    description: Sample Host Database
+    entries:
+      - ip: 127.0.0.1
+        hostnames:
+          - sample.local
+        description: Sample Host
+  - type: combined
+    name: all
+    description: All Hosts
+    settings:
+      - default
+      - sample

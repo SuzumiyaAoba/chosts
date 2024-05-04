@@ -23,4 +23,4 @@ const existsCache = (path: string): boolean => {
   }
 };
 
-export { saveCache, readCache, existsCache };
+export { existsCache, readCache, saveCache };

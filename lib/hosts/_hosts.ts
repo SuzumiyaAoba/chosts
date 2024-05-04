@@ -1,5 +1,5 @@
-import { stripAnsiCode } from "#deps";
-import { chalk } from "#deps";
+import stripAnsiCode from "strip-ansi";
+import chalk from "chalk";
 import { Hosts, HostsLine } from "./types.ts";
 
 const readCurrentHosts = (path: string = "/etc/hosts"): string => {
@@ -30,7 +30,7 @@ const hostsToString = (hosts: Hosts): string => {
         case "entry": {
           const ip = chalk.green(line.ip.padEnd(longest.ip));
           const hostnames = chalk.magenta(
-            line.hostnames.join(" ").padEnd(longest.hostnames)
+            line.hostnames.join(" ").padEnd(longest.hostnames),
           );
           const comment = line.comment ? chalk.gray(`# ${line.comment}`) : "";
 
@@ -48,7 +48,7 @@ const hostsToString = (hosts: Hosts): string => {
 };
 
 const longestLength = (
-  lines: HostsLine[]
+  lines: HostsLine[],
 ): {
   ip: number;
   hostnames: number;
@@ -67,7 +67,7 @@ const longestLength = (
           return acc;
       }
     },
-    { ip: 0, hostnames: 0 }
+    { ip: 0, hostnames: 0 },
   );
 };
 

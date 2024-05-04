@@ -1,4 +1,4 @@
-import { z } from "#deps";
+import { z } from "zod";
 
 const hostEntrySchema = z.object({
   type: z.literal("entry"),
@@ -28,4 +28,4 @@ const hostsSchema = z.object({
   lines: z.array(hostsLineSchema),
 });
 
-export { hostEntrySchema, hostCommentSchema, hostsLineSchema, hostsSchema };
+export { hostCommentSchema, hostEntrySchema, hostsLineSchema, hostsSchema };

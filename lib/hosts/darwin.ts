@@ -1,4 +1,4 @@
-import { $ } from "#deps";
+import { $ } from "dax";
 import { getDarwinVersion } from "/lib/os.ts";
 
 const clearDnsCache = async () => {

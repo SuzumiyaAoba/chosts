@@ -1,4 +1,4 @@
-import { defineCommand, runMain } from "./deps.ts";
+import { defineCommand, runMain } from "citty";
 
 //
 // CLI

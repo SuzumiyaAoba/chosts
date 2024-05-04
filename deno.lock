@@ -217,5 +217,16 @@
     "https://deno.land/x/zod@v3.23.4/locales/en.ts": "a7a25cd23563ccb5e0eed214d9b31846305ddbcdb9c5c8f508b108943366ab4c",
     "https://deno.land/x/zod@v3.23.4/mod.ts": "ec6e2b1255c1a350b80188f97bd0a6bac45801bb46fc48f50b9763aa66046039",
     "https://deno.land/x/zod@v3.23.4/types.ts": "7641b9850663f368f568c243eac418fa19834e78b31a866c73772116caa53e7d"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@david/dax@0.40.1",
+      "jsr:@std/yaml",
+      "npm:boxen@7.1.1",
+      "npm:chalk@5.3.0",
+      "npm:citty@0.1.6",
+      "npm:immer@10.1.1",
+      "npm:strip-ansi@7.1.0"
+    ]
   }
 }

@@ -1,6 +1,6 @@
-import { z } from "#deps";
-import { yaml } from "#deps";
-import { produce } from "#deps";
+import { z } from "zod";
+import * as yaml from "yaml";
+import { produce } from "immer";
 import { readCache, saveCache } from "./cache.ts";
 import { hostsToString } from "./hosts/_hosts.ts";
 import { Hosts, HostsLine } from "./hosts/types.ts";
@@ -67,15 +67,9 @@ type ChostsConfig = {
   configDir: string;
 };
 
-const DEFAULT_CHOSTS_CONFIG: ChostsConfig = {
-  configDir: `${Deno.env.get("HOME")}/.config/chosts`,
-} as const;
-
 const getChosts = (
-  chostsConfig: ChostsConfig = DEFAULT_CHOSTS_CONFIG
+  configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`,
 ): Chosts => {
-  const configPath = `${chostsConfig.configDir}/config.yaml`;
-
   if (!Deno.stat(configPath)) {
     console.error(`Config file not found: ${configPath}`);
     Deno.exit(1);
@@ -105,7 +99,7 @@ const deleteChosts = (chosts: Chosts, name: string) => {
 
 const addChosts = (
   chosts: Chosts,
-  config: HostsSetting | RemoteSetting | CombinedSetting
+  config: HostsSetting | RemoteSetting | CombinedSetting,
 ) => {
   return produce(chosts, (draft) => {
     draft.settings.push(config);
@@ -115,7 +109,7 @@ const addChosts = (
 const updateChosts = (
   chosts: Chosts,
   name: string,
-  config: HostsSetting | RemoteSetting | CombinedSetting
+  config: HostsSetting | RemoteSetting | CombinedSetting,
 ) => {
   return produce(chosts, (draft) => {
     const index = draft.settings.findIndex((config) => config.name === name);
@@ -174,7 +168,7 @@ const remoteSettingToHosts = (settings: RemoteSetting): Hosts => {
 
 const combinedSettingToHosts = (
   chosts: Chosts,
-  setting: CombinedSetting
+  setting: CombinedSetting,
 ): Hosts[] => {
   const hosts: Hosts = {
     comment: setting.description,
@@ -186,7 +180,7 @@ const combinedSettingToHosts = (
 
   if (settings.some((config) => config.type === "combined")) {
     throw new Error(
-      "Combined settings cannot contain other combined settings."
+      "Combined settings cannot contain other combined settings.",
     );
   }
 
@@ -199,7 +193,7 @@ const combinedSettingToHosts = (
 
 const chostsSettingToHosts = (
   chosts: Chosts,
-  setting: ChostsSetting
+  setting: ChostsSetting,
 ): Hosts[] => {
   switch (setting.type) {
     case "hosts":
@@ -213,7 +207,7 @@ const chostsSettingToHosts = (
 
 const chostsSettingToHostsString = (
   chosts: Chosts,
-  setting: ChostsSetting
+  setting: ChostsSetting,
 ): string => {
   const hosts = chostsSettingToHosts(chosts, setting);
 
@@ -236,11 +230,10 @@ export {
   addChosts,
   chostsSettingToHosts,
   chostsSettingToHostsString,
-  readCachedRemoteHosts,
-  fetchRemoteHosts,
-  DEFAULT_CHOSTS_CONFIG,
   deleteChosts,
   deleteChostsConfig,
+  fetchRemoteHosts,
   getChosts,
+  readCachedRemoteHosts,
   updateChosts,
 };

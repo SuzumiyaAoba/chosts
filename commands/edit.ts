@@ -1,14 +1,18 @@
-import { $, defineCommand } from "../deps.ts";
+import { defineCommand } from "citty";
+import { $ } from "dax";
+import { configArgs } from "/commands/args.ts";
 
 export default defineCommand({
   meta: {
     name: "edit",
     description: "Edit the hosts file",
   },
-  async run() {
+  args: {
+    config: configArgs,
+  },
+  async run({ args }) {
     const editor = Deno.env.get("EDITOR")?.split(" ") ?? "open";
-    const home = Deno.env.get("HOME") ?? "~";
 
-    await $`${editor} ${home}/.config/chosts/config.yaml`;
+    await $`${editor} ${args.config}`;
   },
 });

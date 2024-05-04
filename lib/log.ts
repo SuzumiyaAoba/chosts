@@ -1,4 +1,4 @@
-import { chalk } from "#deps";
+import chalk from "chalk";
 
 const log = console.log;
 const error = (...args: unknown[]) =>
