@@ -12,7 +12,7 @@
     "strip-ansi": "npm:strip-ansi@7.1.0",
     "boxen": "npm:boxen@7.1.1",
     "immer": "npm:immer@10.1.1",
-    "/": "./",
+    "@/": "./",
     "./": "./"
   }
 }

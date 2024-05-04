@@ -1,6 +1,6 @@
 import { defineCommand } from "citty";
 import { $ } from "dax";
-import { configArgs } from "/commands/args.ts";
+import { configArgs } from "@/commands/args.ts";
 
 export default defineCommand({
   meta: {

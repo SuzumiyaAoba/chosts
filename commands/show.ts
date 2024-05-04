@@ -1,10 +1,10 @@
 import { defineCommand } from "citty";
 import boxen from "boxen";
 import chalk from "chalk";
-import { chostsSettingToHostsString, getChosts } from "/lib/chosts.ts";
-import { readCurrentHosts } from "/lib/hosts/_hosts.ts";
-import { log } from "/lib/log.ts";
-import { configArgs } from "/commands/args.ts";
+import { chostsSettingToHostsString, getChosts } from "@/lib/chosts.ts";
+import { readCurrentHosts } from "@/lib/hosts/_hosts.ts";
+import { log } from "@/lib/log.ts";
+import { configArgs } from "@/commands/args.ts";
 
 export default defineCommand({
   meta: {

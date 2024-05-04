@@ -1,6 +1,6 @@
 import { defineCommand } from "citty";
-import { ChostsSetting, getChosts } from "/lib/chosts.ts";
-import { configArgs } from "/commands/args.ts";
+import { ChostsSetting, getChosts } from "@/lib/chosts.ts";
+import { configArgs } from "@/commands/args.ts";
 
 export default defineCommand({
   meta: {
