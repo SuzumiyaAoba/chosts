@@ -1,7 +1,7 @@
 version: 1
-settings:
-  - type: hosts
-    name: default
+chosts:
+  default:
+    type: hosts
     description: |-
       Host Database
 
@@ -20,16 +20,16 @@ settings:
         hostnames:
           - localhost
         description: IPv6 loopback
-  - type: hosts
-    name: sample
+  sample:
+    type: hosts
     description: Sample Host Database
     entries:
       - ip: 127.0.0.1
         hostnames:
           - sample.local
         description: Sample Host
-  - type: combined
-    name: all
+  all:
+    type: combined
     description: All Hosts
     settings:
       - default

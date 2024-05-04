@@ -1,7 +1,7 @@
 import { defineCommand } from "citty";
 import boxen from "boxen";
 import chalk from "chalk";
-import { chostsSettingToHostsString, getChosts } from "@/lib/chosts.ts";
+import { chostsSettingToHostsString, getChosts } from "../lib/chosts/chosts.ts";
 import { readCurrentHosts } from "@/lib/hosts/_hosts.ts";
 import { log } from "@/lib/log.ts";
 import { configArgs } from "@/commands/args.ts";
@@ -15,23 +15,23 @@ export default defineCommand({
     config: configArgs,
   },
   run({ args, rawArgs }) {
-    const chosts = getChosts(args.config);
-
-    if (rawArgs.length === 0) {
+    const names = rawArgs.filter((arg) => !arg.startsWith("-"));
+    if (names.length === 0) {
       log(chalk.inverse(" File:", chalk.bold("/etc/hosts ")));
       log(boxen(readCurrentHosts(), { borderStyle: "double" }));
       return;
     }
 
-    for (const arg of rawArgs) {
-      const config = chosts.settings.find((config) => config.name === arg);
+    const chosts = getChosts(args.config);
+    for (const name of names) {
+      const config = chosts.chosts[name];
       if (config === undefined) {
-        console.error(`Host ${arg} not found.`);
+        console.error(`Host ${name} not found.`);
         continue;
       }
 
       log(chalk.bold.inverse(" Name "));
-      log(config.name);
+      log(name);
       log();
       log(chalk.bold.inverse(" Description "));
       log(config.description);
@@ -39,7 +39,7 @@ export default defineCommand({
 
       log(chalk.bold.inverse(" hosts "));
       log(
-        boxen(chostsSettingToHostsString(chosts, config), {
+        boxen(chostsSettingToHostsString(name, config, chosts), {
           borderStyle: "double",
         })
       );

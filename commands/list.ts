@@ -1,6 +1,7 @@
 import { defineCommand } from "citty";
-import { ChostsSetting, getChosts } from "@/lib/chosts.ts";
 import { configArgs } from "@/commands/args.ts";
+import { getChosts } from "@/lib/chosts/chosts.ts";
+import { ChostsSetting } from "@/lib/chosts/types.ts";
 
 export default defineCommand({
   meta: {
@@ -25,13 +26,13 @@ export default defineCommand({
   },
   run({ args }) {
     const chosts = getChosts(args.config);
-    const settings = (chosts.settings = chosts.settings.filter((config) => {
+    const settings = Object.entries(chosts.chosts).filter(([_, config]) => {
       if (args.type === "all") {
         return true;
       }
 
       return config.type === args.type;
-    }));
+    });
 
     if (args.long) {
       longFormat(settings);
@@ -41,10 +42,10 @@ export default defineCommand({
   },
 });
 
-const longFormat = (settings: ChostsSetting[]) => {
+const longFormat = (_settings: [string, ChostsSetting][]) => {
   console.log("TODO");
 };
 
-const defaultFormat = (settings: ChostsSetting[]) => {
-  console.log(settings.map((config) => config.name).join(" "));
+const defaultFormat = (settings: [string, ChostsSetting][]) => {
+  console.log(settings.map(([name, _]) => name).join(" "));
 };
