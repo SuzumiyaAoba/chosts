@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "run": "deno run --allow-env --allow-sys --allow-read --allow-write=/etc/hosts --allow-run main.ts",
+    "run": "deno run --allow-env --allow-sys --allow-read --allow-write=/etc/hosts --allow-run chosts.ts",
     "check": "deno fmt --check && deno lint"
   },
   "imports": {
