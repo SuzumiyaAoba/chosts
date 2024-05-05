@@ -14,7 +14,7 @@ import {
 import { chostsConfigSchema } from "./_schema.ts";
 
 const getChostsConfig = (
-  configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`,
+  configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`
 ): ChostsConfig => {
   if (!Deno.stat(configPath)) {
     console.error(`Config file not found: ${configPath}`);
@@ -44,7 +44,7 @@ const deleteChosts = (config: ChostsConfig, name: string) => {
 const addChosts = (
   name: string,
   config: ChostsConfig,
-  setting: HostsSetting | RemoteSetting | CombinedSetting,
+  setting: HostsSetting | RemoteSetting | CombinedSetting
 ) => {
   return produce(config, (draft) => {
     draft.chosts[name] = setting;
@@ -54,7 +54,7 @@ const addChosts = (
 const updateChosts = (
   name: string,
   config: ChostsConfig,
-  setting: HostsSetting | RemoteSetting | CombinedSetting,
+  setting: HostsSetting | RemoteSetting | CombinedSetting
 ) => {
   return produce(config, (draft) => {
     draft.chosts[name] = setting;
@@ -67,7 +67,7 @@ const updateChosts = (
 
 const fetchRemoteHosts = async (
   name: string,
-  setting: RemoteSetting,
+  setting: RemoteSetting
 ): Promise<string> => {
   const response = await fetch(setting.url);
   const text = await response.text();
@@ -115,7 +115,7 @@ const remoteSettingToHosts = (name: string, setting: RemoteSetting): Hosts => {
 
 const combinedSettingToHosts = (
   setting: CombinedSetting,
-  config: ChostsConfig,
+  config: ChostsConfig
 ): Hosts[] => {
   const hosts: Hosts = {
     comment: setting.description,
@@ -125,12 +125,12 @@ const combinedSettingToHosts = (
   const settings = setting.settings.map((name) => config.chosts[name]);
   if (settings.some((config) => config.type === "combined")) {
     throw new Error(
-      "Combined settings cannot contain other combined settings.",
+      "Combined settings cannot contain other combined settings."
     );
   }
 
   const combinedHosts = setting.settings.flatMap((name) =>
-    chostsSettingToHosts(name, setting, config)
+    chostsSettingToHosts(name, config.chosts[name], config)
   );
 
   return [hosts, ...combinedHosts];
@@ -139,7 +139,7 @@ const combinedSettingToHosts = (
 const chostsSettingToHosts = (
   name: string,
   setting: ChostsSetting,
-  config: ChostsConfig,
+  config: ChostsConfig
 ): Hosts[] => {
   switch (setting.type) {
     case "hosts":
@@ -154,7 +154,7 @@ const chostsSettingToHosts = (
 const chostsSettingToHostsString = (
   name: string,
   setting: ChostsSetting,
-  config: ChostsConfig,
+  config: ChostsConfig
 ): string => {
   const hosts = chostsSettingToHosts(name, setting, config);
 
