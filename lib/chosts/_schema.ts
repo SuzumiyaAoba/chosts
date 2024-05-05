@@ -30,13 +30,13 @@ const chostsSettingSchema = z.union([
   combinedSettingSchema,
 ]);
 
-const chostsSchema = z.object({
+const chostsConfigSchema = z.object({
   version: z.literal(1),
   chosts: z.record(chostsSettingSchema),
 });
 
 export {
-  chostsSchema,
+  chostsConfigSchema,
   chostsSettingSchema,
   combinedSettingSchema,
   hostEntrySchema,

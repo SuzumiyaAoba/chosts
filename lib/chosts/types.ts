@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  chostsSchema,
+  chostsConfigSchema,
   chostsSettingSchema,
   combinedSettingSchema,
   hostEntrySchema,
@@ -18,10 +18,10 @@ type CombinedSetting = z.infer<typeof combinedSettingSchema>;
 
 type ChostsSetting = z.infer<typeof chostsSettingSchema>;
 
-type Chosts = z.infer<typeof chostsSchema>;
+type ChostsConfig = z.infer<typeof chostsConfigSchema>;
 
 export type {
-  Chosts,
+  ChostsConfig,
   ChostsSetting,
   CombinedSetting,
   HostEntry,

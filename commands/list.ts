@@ -1,6 +1,6 @@
 import { defineCommand } from "citty";
 import { configArgs } from "@/commands/args.ts";
-import { getChosts } from "@/lib/chosts/chosts.ts";
+import { getChostsConfig } from "@/lib/chosts/chosts.ts";
 import { ChostsSetting } from "@/lib/chosts/types.ts";
 
 export default defineCommand({
@@ -25,8 +25,8 @@ export default defineCommand({
     },
   },
   run({ args }) {
-    const chosts = getChosts(args.config);
-    const settings = Object.entries(chosts.chosts).filter(([_, config]) => {
+    const config = getChostsConfig(args.config);
+    const settings = Object.entries(config.chosts).filter(([_, config]) => {
       if (args.type === "all") {
         return true;
       }

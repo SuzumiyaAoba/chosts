@@ -4,22 +4,18 @@ import { readCache, saveCache } from "@/lib/cache.ts";
 import { hostsToString } from "@/lib/hosts/_hosts.ts";
 import { Hosts, HostsLine } from "@/lib/hosts/types.ts";
 import {
-  Chosts,
+  ChostsConfig,
   ChostsSetting,
   CombinedSetting,
   HostEntry,
   HostsSetting,
   RemoteSetting,
 } from "./types.ts";
-import { chostsSchema } from "./_schema.ts";
+import { chostsConfigSchema } from "./_schema.ts";
 
-type ChostsConfig = {
-  configDir: string;
-};
-
-const getChosts = (
-  configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`
-): Chosts => {
+const getChostsConfig = (
+  configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`,
+): ChostsConfig => {
   if (!Deno.stat(configPath)) {
     console.error(`Config file not found: ${configPath}`);
     Deno.exit(1);
@@ -27,12 +23,10 @@ const getChosts = (
 
   const configText = Deno.readTextFileSync(configPath);
 
-  return chostsSchema.parse(yaml.parse(configText));
+  return chostsConfigSchema.parse(yaml.parse(configText));
 };
 
-const deleteChostsConfig = (chostsConfig: ChostsConfig) => {
-  const configPath = `${chostsConfig.configDir}/config.yaml`;
-
+const deleteChostsConfig = (configPath: string) => {
   if (!Deno.stat(configPath)) {
     console.error(`Config file not found: ${configPath}`);
     Deno.exit(1);
@@ -41,29 +35,29 @@ const deleteChostsConfig = (chostsConfig: ChostsConfig) => {
   Deno.removeSync(configPath);
 };
 
-const deleteChosts = (chosts: Chosts, name: string) => {
-  return produce(chosts, (draft) => {
+const deleteChosts = (config: ChostsConfig, name: string) => {
+  return produce(config, (draft) => {
     delete draft.chosts[name];
   });
 };
 
 const addChosts = (
   name: string,
-  chosts: Chosts,
-  config: HostsSetting | RemoteSetting | CombinedSetting
+  config: ChostsConfig,
+  setting: HostsSetting | RemoteSetting | CombinedSetting,
 ) => {
-  return produce(chosts, (draft) => {
-    draft.chosts[name] = config;
+  return produce(config, (draft) => {
+    draft.chosts[name] = setting;
   });
 };
 
 const updateChosts = (
   name: string,
-  chosts: Chosts,
-  config: HostsSetting | RemoteSetting | CombinedSetting
+  config: ChostsConfig,
+  setting: HostsSetting | RemoteSetting | CombinedSetting,
 ) => {
-  return produce(chosts, (draft) => {
-    draft.chosts[name] = config;
+  return produce(config, (draft) => {
+    draft.chosts[name] = setting;
   });
 };
 
@@ -73,7 +67,7 @@ const updateChosts = (
 
 const fetchRemoteHosts = async (
   name: string,
-  setting: RemoteSetting
+  setting: RemoteSetting,
 ): Promise<string> => {
   const response = await fetch(setting.url);
   const text = await response.text();
@@ -107,9 +101,9 @@ const hostsSettingToHosts = (setting: HostsSetting): Hosts => {
   };
 };
 
-const remoteSettingToHosts = (name: string, settings: RemoteSetting): Hosts => {
+const remoteSettingToHosts = (name: string, setting: RemoteSetting): Hosts => {
   return {
-    comment: settings.description,
+    comment: setting.description,
     lines: [
       {
         type: "raw",
@@ -121,22 +115,22 @@ const remoteSettingToHosts = (name: string, settings: RemoteSetting): Hosts => {
 
 const combinedSettingToHosts = (
   setting: CombinedSetting,
-  chosts: Chosts
+  config: ChostsConfig,
 ): Hosts[] => {
   const hosts: Hosts = {
     comment: setting.description,
     lines: [],
   } as const;
 
-  const settings = setting.settings.map((name) => chosts.chosts[name]);
+  const settings = setting.settings.map((name) => config.chosts[name]);
   if (settings.some((config) => config.type === "combined")) {
     throw new Error(
-      "Combined settings cannot contain other combined settings."
+      "Combined settings cannot contain other combined settings.",
     );
   }
 
   const combinedHosts = setting.settings.flatMap((name) =>
-    chostsSettingToHosts(name, setting, chosts)
+    chostsSettingToHosts(name, setting, config)
   );
 
   return [hosts, ...combinedHosts];
@@ -145,7 +139,7 @@ const combinedSettingToHosts = (
 const chostsSettingToHosts = (
   name: string,
   setting: ChostsSetting,
-  chosts: Chosts
+  config: ChostsConfig,
 ): Hosts[] => {
   switch (setting.type) {
     case "hosts":
@@ -153,16 +147,16 @@ const chostsSettingToHosts = (
     case "remote":
       return [remoteSettingToHosts(name, setting)];
     case "combined":
-      return combinedSettingToHosts(setting, chosts);
+      return combinedSettingToHosts(setting, config);
   }
 };
 
 const chostsSettingToHostsString = (
   name: string,
   setting: ChostsSetting,
-  chosts: Chosts
+  config: ChostsConfig,
 ): string => {
-  const hosts = chostsSettingToHosts(name, setting, chosts);
+  const hosts = chostsSettingToHosts(name, setting, config);
 
   return hosts.map((hosts) => hostsToString(hosts)).join("\n\n");
 };
@@ -178,7 +172,7 @@ export {
   deleteChosts,
   deleteChostsConfig,
   fetchRemoteHosts,
-  getChosts,
+  getChostsConfig,
   readCachedRemoteHosts,
   updateChosts,
 };

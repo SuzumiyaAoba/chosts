@@ -1,6 +1,9 @@
 import { defineCommand } from "citty";
 import chalk from "chalk";
-import { chostsSettingToHostsString, getChosts } from "../lib/chosts/chosts.ts";
+import {
+  chostsSettingToHostsString,
+  getChostsConfig,
+} from "../lib/chosts/chosts.ts";
 import { writeHosts } from "@/lib/hosts/_hosts.ts";
 import { clearDnsCache } from "@/lib/hosts/darwin.ts";
 import { error } from "@/lib/log.ts";
@@ -25,16 +28,16 @@ export default defineCommand({
       return;
     }
 
-    const chosts = getChosts(args.config);
+    const config = getChostsConfig(args.config);
     const name = rawArgs[0];
-    const setting = chosts.chosts[name];
+    const setting = config.chosts[name];
 
     if (setting === undefined) {
       error(chalk.bold(rawArgs[0]), `not found.`);
       return;
     }
 
-    writeHosts(chostsSettingToHostsString(name, setting, chosts));
+    writeHosts(chostsSettingToHostsString(name, setting, config));
 
     clearDnsCache();
   },
