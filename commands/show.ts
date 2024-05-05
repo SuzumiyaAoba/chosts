@@ -18,24 +18,26 @@ export default defineCommand({
     config: configArgs,
   },
   run({ args, rawArgs }) {
+    const config = getChostsConfig(args.config);
     const names = rawArgs.filter((arg) => !arg.startsWith("-"));
+
     if (names.length === 0) {
       log(chalk.inverse(" File:", chalk.bold("/etc/hosts ")));
-      log(boxen(readCurrentHosts(), { borderStyle: "double" }));
+      log(boxen(readCurrentHosts(config.hosts), { borderStyle: "double" }));
       return;
     }
 
-    const config = getChostsConfig(args.config);
     for (const name of names) {
       const setting = config.chosts[name];
-      if (config === undefined) {
-        console.error(`Host ${name} not found.`);
+      if (setting === undefined) {
+        console.error(chalk.bold(name), `not found.`);
         continue;
       }
 
       log(chalk.bold.inverse(" Name "));
       log(name);
       log();
+
       log(chalk.bold.inverse(" Description "));
       log(setting.description);
       log();
@@ -44,7 +46,7 @@ export default defineCommand({
       log(
         boxen(chostsSettingToHostsString(name, setting, config), {
           borderStyle: "double",
-        }),
+        })
       );
     }
   },

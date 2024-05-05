@@ -1,3 +1,12 @@
+# chosts(1)
+
+_chosts(1)_ is a command to manage hosts file for macOS.
+
+## Configuration
+
+`~/.config/chosts/config.yaml`
+
+```
 version: 1
 chosts:
   default:
@@ -9,20 +18,24 @@ chosts:
       when the system is booting.  Do not change this entry.
     entries:
       - ip: 127.0.0.1
-        hostname: localhost
+        hostnames:
+          - localhost
         description: IPv4 loopback
       - ip: 255.255.255.255.255
-        hostname: broadcasthost
+        hostnames:
+          - broadcasthost
         description: Broadcast address for the local network segment
       - ip: ::1
-        hostname: localhost
+        hostnames:
+          - localhost
         description: IPv6 loopback
   sample:
     type: hosts
     description: Sample Host Database
     entries:
       - ip: 127.0.0.1
-        hostname: sample.local
+        hostnames:
+          - sample.local
         description: Sample Host
   all:
     type: combined
@@ -30,3 +43,18 @@ chosts:
     settings:
       - default
       - sample
+```
+
+### Types
+
+#### `hosts`
+
+#### `remote`
+
+#### `combined`
+
+## Commands
+
+### chosts list
+
+List names of chosts.

@@ -2,13 +2,13 @@ import stripAnsiCode from "strip-ansi";
 import chalk from "chalk";
 import { Hosts, HostsLine } from "./types.ts";
 
-const readCurrentHosts = (path: string = "/etc/hosts"): string => {
+const readCurrentHosts = (path: string): string => {
   const hosts = Deno.readTextFileSync(path);
 
   return hosts;
 };
 
-const writeHosts = (hosts: string, path: string = "/etc/hosts"): void => {
+const writeHosts = (hosts: string, path: string): void => {
   Deno.writeTextFileSync(path, stripAnsiCode(hosts));
 };
 
@@ -30,7 +30,7 @@ const hostsToString = (hosts: Hosts): string => {
         case "entry": {
           const ip = chalk.green(line.ip.padEnd(longest.ip));
           const hostnames = chalk.magenta(
-            line.hostnames.join(" ").padEnd(longest.hostnames),
+            [line.hostname, ...line.aliases].join(" ").padEnd(longest.hostnames)
           );
           const comment = line.comment ? chalk.gray(`# ${line.comment}`) : "";
 
@@ -48,7 +48,7 @@ const hostsToString = (hosts: Hosts): string => {
 };
 
 const longestLength = (
-  lines: HostsLine[],
+  lines: HostsLine[]
 ): {
   ip: number;
   hostnames: number;
@@ -59,7 +59,10 @@ const longestLength = (
         case "entry":
           return {
             ip: Math.max(acc.ip, line.ip.length),
-            hostnames: Math.max(acc.hostnames, line.hostnames.join(" ").length),
+            hostnames: Math.max(
+              acc.hostnames,
+              [line.hostname, ...line.aliases].join(" ").length
+            ),
           };
         case "comment":
           return acc;
@@ -67,7 +70,7 @@ const longestLength = (
           return acc;
       }
     },
-    { ip: 0, hostnames: 0 },
+    { ip: 0, hostnames: 0 }
   );
 };
 

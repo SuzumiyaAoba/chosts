@@ -3,7 +3,8 @@ import { z } from "zod";
 const hostEntrySchema = z.object({
   type: z.literal("entry"),
   ip: z.string(),
-  hostnames: z.array(z.string()),
+  hostname: z.string(),
+  aliases: z.array(z.string()).default([]),
   comment: z.string().optional(),
 });
 

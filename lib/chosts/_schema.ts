@@ -2,7 +2,8 @@ import { z } from "zod";
 
 const hostEntrySchema = z.object({
   ip: z.string(),
-  hostnames: z.array(z.string()),
+  hostname: z.string(),
+  aliases: z.array(z.string()).default([]),
   description: z.string().optional(),
 });
 
@@ -32,6 +33,7 @@ const chostsSettingSchema = z.union([
 
 const chostsConfigSchema = z.object({
   version: z.literal(1),
+  hosts: z.string().default("/etc/hosts"),
   chosts: z.record(chostsSettingSchema),
 });
 

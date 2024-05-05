@@ -3,7 +3,7 @@ import chalk from "chalk";
 import {
   chostsSettingToHostsString,
   getChostsConfig,
-} from "../lib/chosts/chosts.ts";
+} from "@/lib/chosts/chosts.ts";
 import { writeHosts } from "@/lib/hosts/_hosts.ts";
 import { clearDnsCache } from "@/lib/hosts/darwin.ts";
 import { error } from "@/lib/log.ts";
@@ -37,7 +37,7 @@ export default defineCommand({
       return;
     }
 
-    writeHosts(chostsSettingToHostsString(name, setting, config));
+    writeHosts(chostsSettingToHostsString(name, setting, config), config.hosts);
 
     clearDnsCache();
   },

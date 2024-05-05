@@ -89,7 +89,8 @@ const entryToLine = (entry: HostEntry): HostsLine => {
   return {
     type: "entry",
     ip: entry.ip,
-    hostnames: entry.hostnames,
+    hostname: entry.hostname,
+    aliases: entry.aliases,
     comment: entry.description,
   };
 };
