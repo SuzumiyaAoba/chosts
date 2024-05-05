@@ -8,59 +8,104 @@ _chosts(1)_ is a command to manage hosts file for macOS.
 deno install --allow-all --allow-write=/etc/hosts --allow-run --global https://deno.land/x/chosts@0.0.2/chosts.ts --force --import-map=https://deno.land/x/chosts@0.0.2/deno.jsonc
 ```
 
-## Configuration
+## Usage
 
-`~/.config/chosts/config.yaml`
+### Configuration
 
-```
+#### Example
+
+<table>
+<tr><td>
+
+**~/.config/chosts/chosts.yaml**
+
+</td></tr>
+<tr><td>
+
+```yaml
 version: 1
-chosts:
-  default:
-    type: hosts
-    description: |-
-      Host Database
-
-      localhost is used to configure the loopback interface
-      when the system is booting.  Do not change this entry.
-    entries:
-      - ip: 127.0.0.1
-        hostnames:
-          - localhost
-        description: IPv4 loopback
-      - ip: 255.255.255.255.255
-        hostnames:
-          - broadcasthost
-        description: Broadcast address for the local network segment
-      - ip: ::1
-        hostnames:
-          - localhost
-        description: IPv6 loopback
-  sample:
-    type: hosts
-    description: Sample Host Database
-    entries:
-      - ip: 127.0.0.1
-        hostnames:
-          - sample.local
-        description: Sample Host
-  all:
-    type: combined
-    description: All Hosts
-    settings:
-      - default
-      - sample
+hosts: /etc/hosts
+chosts: ./chosts
 ```
 
-### Types
+</td></tr>
 
-#### `hosts`
+<tr><td>
 
-#### `remote`
+**~/.config/chosts/chosts/default.yaml** (default hosts file on macOS)
 
-#### `combined`
+</tr></td>
 
-## Commands
+<tr><td>
 
-### chosts list
+```yaml
+type: hosts
+description: |-
+  Host Database
+
+  localhost is used to configure the loopback interface
+  when the system is booting.  Do not change this entry.
+entries:
+  - ip: 127.0.0.1
+    hostname: localhost
+    description: IPv4 loopback
+  - ip: 255.255.255.255.255
+    hostname: broadcasthost
+    description: Broadcast address for the local network segment
+  - ip: ::1
+    hostname: localhost
+    description: IPv6 loopback
+```
+
+</tr></td>
+
+<tr><td>
+
+**~/.config/chosts/chosts/sample.yaml**
+
+</tr></td>
+
+<tr><td>
+
+```yaml
+type: hosts
+description: Sample Host Database
+entries:
+  - ip: 127.0.0.1
+    hostname: sample.local
+    description: Sample Host
+```
+
+</tr></td>
+
+<tr><td>
+
+**~/.config/chosts/chosts/all.yaml**
+
+</tr></td>
+
+<tr><td>
+
+```yaml
+type: combined
+description: All Hosts
+settings:
+  - default
+  - sample
+```
+
+</tr></td>
+
+</table>
+
+#### Types
+
+##### `hosts`
+
+##### `combined`
+
+### Commands
+
+#### $ chosts list
 
 List names of chosts.
