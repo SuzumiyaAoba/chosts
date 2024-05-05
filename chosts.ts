@@ -7,7 +7,7 @@ import { defineCommand, runMain } from "citty";
 const main = defineCommand({
   meta: {
     name: "chosts",
-    version: "0.0.1",
+    version: "0.0.2",
     description: "Manage your hosts file",
   },
   subCommands: {

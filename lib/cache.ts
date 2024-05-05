@@ -1,4 +1,4 @@
-const CHOSTS_CACHE_DIR = ".cache/chosts";
+const CHOSTS_CACHE_DIR = `${Deno.env.get("HOME")}/.cache/chosts`;
 
 const saveCache = (path: string, content: string) => {
   const existsCacheDir = Deno.statSync(CHOSTS_CACHE_DIR).isDirectory;
@@ -7,11 +7,15 @@ const saveCache = (path: string, content: string) => {
     Deno.mkdirSync(CHOSTS_CACHE_DIR, { recursive: true });
   }
 
-  Deno.writeTextFileSync(`.cache/${path}`, content);
+  Deno.writeTextFileSync(`${CHOSTS_CACHE_DIR}/${path}`, content);
 };
 
 const readCache = (path: string): string => {
   return Deno.readTextFileSync(`${CHOSTS_CACHE_DIR}/${path}`);
+};
+
+const deleteCache = (path: string): void => {
+  Deno.removeSync(`${CHOSTS_CACHE_DIR}/${path}`);
 };
 
 const existsCache = (path: string): boolean => {
@@ -23,4 +27,4 @@ const existsCache = (path: string): boolean => {
   }
 };
 
-export { existsCache, readCache, saveCache };
+export { existsCache, readCache, saveCache, deleteCache };
