@@ -1,30 +1,20 @@
 import { z } from "zod";
 import {
   chostsConfigSchema,
-  chostsSettingSchema,
-  combinedSettingSchema,
+  chostsSchema,
+  combinedChostsSchema,
   hostEntrySchema,
-  hostsSettingSchema,
-  remoteSettingSchema,
+  hostsChostsSchema,
 } from "./_schema.ts";
 
 type HostEntry = z.infer<typeof hostEntrySchema>;
 
-type HostsSetting = z.infer<typeof hostsSettingSchema>;
+type HostsChosts = z.infer<typeof hostsChostsSchema>;
 
-type RemoteSetting = z.infer<typeof remoteSettingSchema>;
+type CombinedChosts = z.infer<typeof combinedChostsSchema>;
 
-type CombinedSetting = z.infer<typeof combinedSettingSchema>;
-
-type ChostsSetting = z.infer<typeof chostsSettingSchema>;
+type Chosts = z.infer<typeof chostsSchema>;
 
 type ChostsConfig = z.infer<typeof chostsConfigSchema>;
 
-export type {
-  ChostsConfig,
-  ChostsSetting,
-  CombinedSetting,
-  HostEntry,
-  HostsSetting,
-  RemoteSetting,
-};
+export type { ChostsConfig, Chosts, CombinedChosts, HostEntry, HostsChosts };

@@ -1,0 +1,6 @@
+type: hosts
+description: Sample Host Database
+entries:
+  - ip: 127.0.0.1
+    hostname: sample.local
+    description: Sample Host

@@ -1,0 +1,5 @@
+type: combined
+description: All Hosts
+settings:
+  - default
+  - sample

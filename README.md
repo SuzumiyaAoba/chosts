@@ -2,6 +2,12 @@
 
 _chosts(1)_ is a command to manage hosts file for macOS.
 
+## Install
+
+```console
+deno install --allow-all --allow-write=/etc/hosts --allow-run --global https://deno.land/x/chosts@0.0.2/chosts.ts --force --import-map=https://deno.land/x/chosts@0.0.2/deno.jsonc
+```
+
 ## Configuration
 
 `~/.config/chosts/config.yaml`

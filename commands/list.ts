@@ -1,7 +1,7 @@
 import { defineCommand } from "citty";
 import { configArgs } from "@/commands/args.ts";
-import { getChostsConfig } from "@/lib/chosts/chosts.ts";
-import { ChostsSetting } from "@/lib/chosts/types.ts";
+import { ChostsManager } from "../lib/chosts/manager.ts";
+import { Chosts } from "@/lib/chosts/types.ts";
 
 export default defineCommand({
   meta: {
@@ -21,18 +21,20 @@ export default defineCommand({
       description: "List hosts of a specific type.",
       alias: "t",
       default: "all",
-      valueHint: "all|hosts|remote|combined",
+      valueHint: "all|hosts|combined",
     },
   },
   run({ args }) {
-    const config = getChostsConfig(args.config);
-    const settings = Object.entries(config.chosts).filter(([_, config]) => {
-      if (args.type === "all") {
-        return true;
-      }
+    const manager = new ChostsManager(args.config);
+    const settings = Object.entries(manager.getAllChosts()).filter(
+      ([_, config]) => {
+        if (args.type === "all") {
+          return true;
+        }
 
-      return config.type === args.type;
-    });
+        return config.type === args.type;
+      }
+    );
 
     if (args.long) {
       longFormat(settings);
@@ -42,10 +44,10 @@ export default defineCommand({
   },
 });
 
-const longFormat = (_settings: [string, ChostsSetting][]) => {
+const longFormat = (_settings: [string, Chosts][]) => {
   console.log("TODO");
 };
 
-const defaultFormat = (settings: [string, ChostsSetting][]) => {
+const defaultFormat = (settings: [string, Chosts][]) => {
   console.log(settings.map(([name, _]) => name).join(" "));
 };

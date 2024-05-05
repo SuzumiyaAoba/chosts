@@ -17,12 +17,6 @@ const hostsToString = (hosts: Hosts): string => {
     return hosts;
   }
 
-  const comment = hosts.comment
-    ?.split("\n")
-    .map((line) => `# ${line}`)
-    .join("\n");
-  const header = comment ? chalk.gray(`##\n${comment}\n##`) : "";
-
   const longest = longestLength(hosts.lines);
   const lines = hosts.lines
     .map((line) => {
@@ -38,13 +32,11 @@ const hostsToString = (hosts: Hosts): string => {
         }
         case "comment":
           return chalk.gray(`# ${line.comment}`);
-        case "raw":
-          return line.raw;
       }
     })
     .join("\n");
 
-  return [header, lines].filter((str) => str.length !== 0).join("\n");
+  return lines;
 };
 
 const longestLength = (
@@ -66,7 +58,7 @@ const longestLength = (
           };
         case "comment":
           return acc;
-        case "raw":
+        case "empty":
           return acc;
       }
     },

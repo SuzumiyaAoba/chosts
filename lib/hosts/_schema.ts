@@ -11,21 +11,20 @@ const hostEntrySchema = z.object({
 const hostCommentSchema = z.object({
   type: z.literal("comment"),
   comment: z.string(),
+  level: z.number().default(1),
 });
 
-const hostRawSchema = z.object({
-  type: z.literal("raw"),
-  raw: z.string(),
+const hostEmptySchema = z.object({
+  type: z.literal("empty"),
 });
 
 const hostsLineSchema = z.union([
   hostEntrySchema,
+  hostEmptySchema,
   hostCommentSchema,
-  hostRawSchema,
 ]);
 
 const hostsSchema = z.object({
-  comment: z.string().optional(),
   lines: z.array(hostsLineSchema),
 });
 

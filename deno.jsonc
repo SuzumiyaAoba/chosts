@@ -4,6 +4,7 @@
     "check": "deno fmt --check && deno lint"
   },
   "imports": {
+    "std/": "https://deno.land/std/",
     "dax": "jsr:@david/dax@0.40.1",
     "zod": "https://deno.land/x/zod@v3.23.4/mod.ts",
     "yaml": "jsr:@std/yaml",
@@ -11,7 +12,6 @@
     "chalk": "npm:chalk@5.3.0",
     "strip-ansi": "npm:strip-ansi@7.1.0",
     "boxen": "npm:boxen@7.1.1",
-    "immer": "npm:immer@10.1.1",
     "@/": "./",
     "./": "./"
   }
