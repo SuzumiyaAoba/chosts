@@ -1,16 +1,11 @@
 import * as path from "std/path/mod.ts";
 import * as yaml from "yaml";
 import { hostsToString } from "@/lib/hosts/_hosts.ts";
-import { Hosts, HostsLine } from "@/lib/hosts/types.ts";
-import {
-  ChostsConfig,
-  Chosts,
-  CombinedChosts,
-  HostEntry,
-  HostsChosts,
-} from "./types.ts";
+import { Hosts } from "@/lib/hosts/types.ts";
+import { ChostsConfig, Chosts } from "./types.ts";
 import { chostsConfigSchema, chostsSchema } from "./_schema.ts";
 import { error } from "@/lib/log.ts";
+import { chostsToHosts } from "./_utils.ts";
 
 class ChostsManager {
   readonly #configDir: string;
@@ -80,7 +75,7 @@ class ChostsManager {
   }
 
   getHosts(name: string): Hosts[] {
-    return chostsSettingToHosts(name, this);
+    return chostsToHosts(name, this);
   }
 
   getHostsAsString(name: string): string {
@@ -109,82 +104,5 @@ class ChostsManager {
     return path.resolve(this.chostsDir(), `${name}.yaml`);
   };
 }
-
-//
-// Chosts to Hosts
-//
-
-const hostsEntryToLine = (entry: HostEntry): HostsLine => {
-  return {
-    type: "entry",
-    ip: entry.ip,
-    hostname: entry.hostname,
-    aliases: entry.aliases,
-    comment: entry.description,
-  };
-};
-
-const hostsSettingToHosts = (chosts: HostsChosts): Hosts => {
-  const header =
-    chosts.description
-      ?.split("\n")
-      .map((comment) => ({ type: "comment", comment, level: 1 } as const)) ??
-    [];
-  return {
-    lines: [
-      ...header,
-      ...chosts.entries.map((entry) => hostsEntryToLine(entry)),
-    ],
-  };
-};
-
-const combinedSettingToHosts = (
-  chosts: CombinedChosts,
-  manager: ChostsManager
-): Hosts[] => {
-  const hosts = {
-    type: "hosts",
-    lines:
-      chosts.description?.split("\n").map(
-        (comment) =>
-          ({
-            type: "comment",
-            comment,
-            level: 1,
-          } as const)
-      ) ?? [],
-  };
-
-  const settings = chosts.settings.map((name) => manager.getChosts(name));
-  if (settings.some((config) => config.type === "combined")) {
-    throw new Error(
-      "Combined settings cannot contain other combined settings."
-    );
-  }
-
-  const combinedHosts = chosts.settings.flatMap((name) =>
-    chostsSettingToHosts(name, manager)
-  );
-
-  return [hosts, ...combinedHosts];
-};
-
-const chostsSettingToHosts = (
-  name: string,
-  manager: ChostsManager
-): Hosts[] => {
-  const chosts = manager.getChosts(name);
-
-  switch (chosts.type) {
-    case "hosts":
-      return [hostsSettingToHosts(chosts)];
-    case "combined":
-      return combinedSettingToHosts(chosts, manager);
-  }
-};
-
-//
-// exports
-//
 
 export { ChostsManager };
