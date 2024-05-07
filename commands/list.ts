@@ -33,7 +33,7 @@ export default defineCommand({
         }
 
         return config.type === args.type;
-      }
+      },
     );
 
     if (args.long) {

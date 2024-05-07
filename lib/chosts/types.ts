@@ -17,4 +17,4 @@ type Chosts = z.infer<typeof chostsSchema>;
 
 type ChostsConfig = z.infer<typeof chostsConfigSchema>;
 
-export type { ChostsConfig, Chosts, CombinedChosts, HostEntry, HostsChosts };
+export type { Chosts, ChostsConfig, CombinedChosts, HostEntry, HostsChosts };

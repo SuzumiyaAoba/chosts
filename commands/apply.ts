@@ -34,7 +34,7 @@ export default defineCommand({
       return;
     }
 
-    writeHosts(manager.getHostsAsString(name), manager.chostsPath(name));
+    writeHosts(manager.getHostsAsString(name), manager.getConfig().hosts);
 
     clearDnsCache();
   },

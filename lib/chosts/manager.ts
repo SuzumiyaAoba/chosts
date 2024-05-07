@@ -2,10 +2,10 @@ import * as path from "std/path/mod.ts";
 import * as yaml from "yaml";
 import { hostsToString } from "@/lib/hosts/_hosts.ts";
 import { Hosts } from "@/lib/hosts/types.ts";
-import { ChostsConfig, Chosts } from "./types.ts";
+import { Chosts, ChostsConfig } from "./types.ts";
 import { chostsConfigSchema, chostsSchema } from "./_schema.ts";
 import { error } from "@/lib/log.ts";
-import { chostsToHosts } from "./_utils.ts";
+import { chostsToHosts, hashSync } from "./_utils.ts";
 
 class ChostsManager {
   readonly #configDir: string;
@@ -18,7 +18,7 @@ class ChostsManager {
 
   names(): string[] {
     return Array.from(Deno.readDirSync(this.chostsDir())).map(
-      (entry) => path.parse(entry.name).name
+      (entry) => path.parse(entry.name).name,
     );
   }
 
@@ -40,7 +40,7 @@ class ChostsManager {
 
   getAllChosts(): Record<string, Chosts> {
     return Object.fromEntries(
-      this.names().map((name) => [name, this.getChosts(name)])
+      this.names().map((name) => [name, this.getChosts(name)]),
     );
   }
 
@@ -80,11 +80,18 @@ class ChostsManager {
 
   getHostsAsString(name: string): string {
     const hosts = this.getHosts(name);
-    return hosts.map((hosts) => hostsToString(hosts)).join("\n\n");
+    const hostsString = hosts.map((hosts) => hostsToString(hosts)).join("\n\n");
+    const header = `# ---\n# name: ${name}\n# hash: ${
+      hashSync(
+        hostsString,
+      )
+    }\n# --- \n\n`;
+
+    return header + hostsString;
   }
 
   private readChostsConfig = (
-    configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`
+    configPath = `${Deno.env.get("HOME")}/.config/chosts/config.yaml`,
   ): ChostsConfig => {
     if (!Deno.statSync(configPath)) {
       error(`Config file not found: ${configPath}`);

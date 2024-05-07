@@ -24,7 +24,9 @@ const hostsToString = (hosts: Hosts): string => {
         case "entry": {
           const ip = chalk.green(line.ip.padEnd(longest.ip));
           const hostnames = chalk.magenta(
-            [line.hostname, ...line.aliases].join(" ").padEnd(longest.hostnames)
+            [line.hostname, ...line.aliases].join(" ").padEnd(
+              longest.hostnames,
+            ),
           );
           const comment = line.comment ? chalk.gray(`# ${line.comment}`) : "";
 
@@ -40,7 +42,7 @@ const hostsToString = (hosts: Hosts): string => {
 };
 
 const longestLength = (
-  lines: HostsLine[]
+  lines: HostsLine[],
 ): {
   ip: number;
   hostnames: number;
@@ -53,7 +55,7 @@ const longestLength = (
             ip: Math.max(acc.ip, line.ip.length),
             hostnames: Math.max(
               acc.hostnames,
-              [line.hostname, ...line.aliases].join(" ").length
+              [line.hostname, ...line.aliases].join(" ").length,
             ),
           };
         case "comment":
@@ -62,7 +64,7 @@ const longestLength = (
           return acc;
       }
     },
-    { ip: 0, hostnames: 0 }
+    { ip: 0, hostnames: 0 },
   );
 };
 

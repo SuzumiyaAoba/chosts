@@ -23,7 +23,7 @@ export default defineCommand({
       log(
         boxen(readCurrentHosts(manager.getConfig().hosts), {
           borderStyle: "double",
-        })
+        }),
       );
       return;
     }
@@ -47,7 +47,7 @@ export default defineCommand({
       log(
         boxen(manager.getHostsAsString(name), {
           borderStyle: "double",
-        })
+        }),
       );
     }
   },
