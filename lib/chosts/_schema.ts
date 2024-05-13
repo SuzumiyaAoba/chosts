@@ -25,7 +25,7 @@ const chostsSchema = z.union([hostsChostsSchema, combinedChostsSchema]);
 const chostsConfigSchema = z.object({
   version: z.literal(1),
   hosts: z.string().default("/etc/hosts"),
-  chosts: z.string(),
+  chosts: z.string().default("./chosts"),
 });
 
 export {
